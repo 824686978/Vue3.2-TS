@@ -1,17 +1,16 @@
 import { createApp } from 'vue'
-import './service/axios_demo'
-
 import { globalRegister } from './global'
+import 'normalize.css'
+import './assets/css/index.less'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import ElementPlus from 'element-plus'
+import { setupStore } from './store'
 
 const app = createApp(App)
-app.use(ElementPlus, { size: 'small', zIndex: 3000 })
 app.use(globalRegister)
-
 app.use(router)
 app.use(store)
-
+// 防止用户刷新，重新请求数据
+setupStore()
 app.mount('#app')
