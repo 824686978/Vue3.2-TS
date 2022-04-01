@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, defineExpose, ref } from 'vue'
+import { reactive, ref, defineExpose } from 'vue'
 import { useStore } from 'vuex'
 import { ElForm } from 'element-plus'
 import { rules } from '../config/account-config'
@@ -26,7 +26,7 @@ const account = reactive({
 // 验证ElForm是否通过
 const formRef = ref<InstanceType<typeof ElForm>>()
 // 登录逻辑
-const loginAction = (isKeepPassword) => {
+const loginAction = (isKeepPassword: any) => {
   // 验证ElForm是否通过，通过返回true
   formRef.value?.validate((valid) => {
     if (valid) {
