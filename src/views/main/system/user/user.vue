@@ -1,18 +1,19 @@
 <template>
   <div class="user">
-    <h2>user</h2>
+    <div class="search">
+      <yj-form
+        v-bind="searchFormConfig"
+      ></yj-form>
+    </div>
+    <div class="content"></div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import YjForm from '@/base-ui/form'
+import { searchFormConfig } from './config/search.config'
 
-export default defineComponent({
-  name: 'user',
-  setup() {
-    return {}
-  }
-})
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

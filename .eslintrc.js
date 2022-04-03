@@ -22,6 +22,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     'prettier/prettier': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'no-undef': 'off'
+    'no-undef': 'off',
+    'vue/multi-word-component-names': 'off'
   }
 }

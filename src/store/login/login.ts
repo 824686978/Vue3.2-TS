@@ -6,6 +6,7 @@ import {
 } from '@/service/login/login'
 import router from '@/router'
 import localCache from '@/utils/cache'
+import { mapMenusToRoutes } from '@/utils/map-menus'
 import { IAccount } from '@/service/login/types'
 import { ILoginState } from './types'
 import { IRootState } from '../types'
@@ -33,6 +34,15 @@ const loginModule: Module<ILoginState, IRootState> = {
     //保存用户菜单
     changeUserMenus(state, userMenus) {
       state.userMenus = userMenus
+
+      // 注册路由 userMenus => routes
+      // 获取所有的动态路由
+      const routes = mapMenusToRoutes(userMenus)
+
+      // 将routes => router.main.children
+      routes.forEach((route) => {
+        router.addRoute('main', route)
+      })
     }
   },
   getters: {},
@@ -67,10 +77,9 @@ const loginModule: Module<ILoginState, IRootState> = {
       // 跳到首页
       router.push('./main')
     },
-    
-    // 防止刷新，重新请求数据
-    loadLocalLogin({commit}) {
 
+    // 防止刷新，重新请求数据
+    loadLocalLogin({ commit }) {
       const token = localCache.getCache('token')
       if (token) {
         commit('changeToken', token)

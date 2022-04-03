@@ -8,7 +8,11 @@
         <el-header class="page-header">
           <nav-header @fold-change="handleFoldChang"></nav-header>
         </el-header>
-        <el-main class="page-content">Main</el-main>
+        <el-main class="page-content">
+          <div class="page-content-info">
+            <router-view></router-view>
+          </div>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -41,6 +45,9 @@ const handleFoldChang = (isFold: boolean) => {
 
 .page-content {
   height: calc(100% - 48px);
+  .page-content-info {
+    background-color: #fff;
+  }
 }
 
 .el-header,

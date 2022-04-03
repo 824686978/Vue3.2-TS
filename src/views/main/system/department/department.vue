@@ -4,15 +4,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 
-export default defineComponent({
-  name: 'department',
-  setup() {
-    return {}
-  }
-})
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

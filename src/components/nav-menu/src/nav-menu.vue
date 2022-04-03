@@ -26,7 +26,7 @@
             </template>
             <!-- 遍历里面的item -->
             <template v-for="subitem in item.children" :key="subitem.id">
-              <el-menu-item :index="subitem.id + ''">
+              <el-menu-item :index="subitem.id + ''" @click="handleMenuItemClick(subitem)">
                 <template #title>
                   <el-icon v-if="subitem.icon" :class="subitem.icon"></el-icon>
                   <span>{{ subitem.name }}</span>
@@ -52,7 +52,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps({
     collapse: {
       type: Boolean,
@@ -61,6 +63,12 @@ const props = defineProps({
   })
 const store = useStore()
 const userMenus = computed(() => store.state.login.userMenus)
+
+const handleMenuItemClick = (item: any) => {
+  router.push({
+    path: item.url ?? './not-found'
+  })
+}
 </script>
 
 

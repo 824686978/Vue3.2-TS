@@ -4,15 +4,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 
-export default defineComponent({
-  name: 'chat',
-  setup() {
-    return {}
-  }
-})
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
