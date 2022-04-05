@@ -1,5 +1,8 @@
 <template>
   <div class="yj-form">
+    <div class="header">
+      <slot name="header"></slot>
+    </div>
     <el-form :label-width="labelWidth">
       <el-row>
         <template v-for="item in formItems" :key="item.label">
@@ -10,6 +13,7 @@
                   :placeholder="item.placeholder"
                   v-bind="item.otherOptions"
                   :show-password="item.type === 'password'"
+                  v-model="formData[`${item.field}`]"
                 />
               </template>
               <template v-else-if="item.type === 'select'">
@@ -17,6 +21,7 @@
                   :placeholder="item.placeholder"
                   style="width: 100%"
                   v-bind="item.otherOptions"
+                  v-model="formData[`${item.field}`]"
                 >
                   <el-option
                     v-for="option in item.options"
@@ -26,22 +31,33 @@
                 </el-select>
               </template>
               <template v-else-if="item.type === 'datepicker'">
-                <el-date-picker style="width: 100%" v-bind="item.otherOptions"></el-date-picker>
+                <el-date-picker
+                  style="width: 100%"
+                  v-bind="item.otherOptions"
+                  v-model="formData[`${item.field}`]"
+                ></el-date-picker>
               </template>
             </el-form-item>
           </el-col>
         </template>
       </el-row>
     </el-form>
+    <div class="footer">
+      <slot name="footer"></slot>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { PropType, ref, watch } from 'vue'
 import { IFormItem } from '../types'
 
 
 const props = defineProps({
+  modelValue: {
+    type: Object,
+    required: true
+  },
   formItems: {
     type: Array as PropType<IFormItem[]>,
     default: () => []
@@ -52,7 +68,7 @@ const props = defineProps({
   },
   itemStyle: {
     type: Object,
-    default: () => ({padding: '10px 40px' })
+    default: () => ({ padding: '10px 40px' })
   },
   colLayout: {
     type: Object,
@@ -65,6 +81,10 @@ const props = defineProps({
     })
   }
 })
+const emit = defineEmits(['update:modelValue'])
+const formData = ref({ ...props.modelValue })
+
+watch(formData, (newValue) => { emit('update:modelValue', newValue) }, { deep: true })
 
 </script>
 

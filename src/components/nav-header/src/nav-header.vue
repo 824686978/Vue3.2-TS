@@ -7,7 +7,9 @@
       <expand />
     </el-icon>
     <div class="content">
-      <div>面包屑</div>
+      <div>
+        <yj-breadcrumb :breadcrumb="breadcrumb"></yj-breadcrumb>
+      </div>
       <div>
         <user-info></user-info>
       </div>
@@ -16,8 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import userInfo from './cpns/user-info.vue';
+import { ref, computed } from 'vue'
+import userInfo from './cpns/user-info.vue'
+import YjBreadcrumb, { IBreadcrumb } from '@/base-ui/breadcrumb'
+import { pathMapBreadcrumbs } from '@/utils/map-menus'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+
+
 
 const emit = defineEmits(['foldChange'])
 const isFold = ref(false)
@@ -26,6 +34,14 @@ const handleFoldClick = () => {
   emit('foldChange', isFold.value)
 }
 
+// 定义面包屑的数据
+const store = useStore()
+const route = useRoute()
+const breadcrumb = computed(() => {
+  const userMenus = store.state.login.userMenus
+  const currentPath = route.path
+  return pathMapBreadcrumbs(userMenus, currentPath)
+})
 </script>
 
 <style scoped lang="less">

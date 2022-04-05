@@ -1,4 +1,4 @@
-import yjRequest from "../index"
+import yjRequest from "@/service"
 import { IAccount, ILoginResult, IDataType } from '@/service/login/types'
 
 enum loginApi {

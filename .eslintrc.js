@@ -23,6 +23,7 @@ module.exports = {
     'prettier/prettier': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-undef': 'off',
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
+    'vue/no-mutating-props': 'off'
   }
 }

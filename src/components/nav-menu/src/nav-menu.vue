@@ -5,7 +5,7 @@
       <span class="title" v-if="!collapse">Vue3.2+TS</span>
     </div>
     <el-menu
-      default-active="2"
+      :default-active="defaultValue"
       class="el-menu-vertical"
       background-color="#0c2135"
       :collapse="collapse"
@@ -50,11 +50,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { pathMapToMenu } from '@/utils/map-menus'
 
 const router = useRouter()
+const route = useRoute()
 const props = defineProps({
     collapse: {
       type: Boolean,
@@ -63,6 +65,10 @@ const props = defineProps({
   })
 const store = useStore()
 const userMenus = computed(() => store.state.login.userMenus)
+
+const currentPath = route.path
+const menu = pathMapToMenu(userMenus.value, currentPath)
+const defaultValue = ref(menu.id + '')
 
 const handleMenuItemClick = (item: any) => {
   router.push({

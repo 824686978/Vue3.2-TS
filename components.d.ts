@@ -6,6 +6,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     NavHeader: typeof import('./src/components/nav-header/src/nav-header.vue')['default']
     NavMenu: typeof import('./src/components/nav-menu/src/nav-menu.vue')['default']
+    PageSearch: typeof import('./src/components/page-search/src/page-search.vue')['default']
     UserInfo: typeof import('./src/components/nav-header/src/cpns/user-info.vue')['default']
   }
 }
