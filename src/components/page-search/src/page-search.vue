@@ -6,7 +6,7 @@
       </template>
       <template #footer>
         <div class="footer">
-          <el-button type="info">
+          <el-button type="info" @click="handleResetClick">
             <el-icon>
               <refresh />
             </el-icon>重置
@@ -33,13 +33,19 @@ const props = defineProps({
   }
 })
 
-const formData = ref({
-  id: 'id',
-  name: '',
-  password: '',
-  sport: '',
-  createTime: ''
-})
+// 动态获取配置文件的field
+const formItems = props.searchFormConfig.formItems
+const formOriginData = {}
+for(const item of formItems) {
+  formOriginData[item.field] = ''
+}
+// 动态设置formData
+const formData = ref(formOriginData)
+
+// 重置
+const handleResetClick = () => {
+ formData.value = formOriginData
+}
 
 </script>
 
