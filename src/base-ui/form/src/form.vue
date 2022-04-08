@@ -82,10 +82,10 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue'])
+// 对数据进行浅拷贝
 const formData = ref({ ...props.modelValue })
 
-watch(() => props.modelValue, (newValue) => formData.value = { ...newValue })
-
+// 对数据进行监听
 watch(formData, (newValue) => { emit('update:modelValue', newValue) }, { deep: true })
 
 </script>

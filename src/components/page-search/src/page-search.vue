@@ -11,7 +11,7 @@
               <refresh />
             </el-icon>重置
           </el-button>
-          <el-button type="primary">
+          <el-button type="primary" @click="handleQueryClick">
             <el-icon>
               <search />
             </el-icon>搜索
@@ -42,9 +42,20 @@ for(const item of formItems) {
 // 动态设置formData
 const formData = ref(formOriginData)
 
+// 定义重置和搜索事件
+const emit = defineEmits(['resetBtnClick', 'queryBtnClick'])
 // 重置
 const handleResetClick = () => {
- formData.value = formOriginData
+  // 对数据的浅拷贝进行赋值
+  for (const key in formOriginData) {
+    formData.value[`${key}`] = formOriginData[key]
+  }
+  emit('resetBtnClick')
+}
+
+// 搜索
+const handleQueryClick = () => {
+  emit('queryBtnClick', formData.value)
 }
 
 </script>

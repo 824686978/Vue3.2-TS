@@ -1,9 +1,14 @@
 <template>
   <div class="page-content">
-    <yj-table :listData="dataList" v-bind="contentTableConfig">
+    <yj-table
+      :listData="dataList"
+      :listCount="dataCount"
+      v-bind="contentTableConfig"
+      v-model:page="pageInfo"
+    >
       <!-- 头部插槽 -->
       <template #headerHandler>
-        <el-button type="primary">新建用户</el-button>
+        <el-button type="primary" v-if="isCreate">新建用户</el-button>
       </template>
 
       <!-- 列的插槽 -->
@@ -19,18 +24,25 @@
       <template #updateAt="scope">{{ $filters.formatTime(scope.row.updateAt) }}</template>
       <template #handle>
         <div class="handle-btn">
-          <el-button type="text" icon="Edit" size="small">编辑</el-button>
-          <el-button type="text" icon="Delete" size="small">删除</el-button>
+          <el-button type="text" icon="Edit" size="small" v-if="isUpdate">编辑</el-button>
+          <el-button type="text" icon="Delete" size="small" v-if="isDelete">删除</el-button>
         </div>
+      </template>
+      <!-- 动态插入剩余插槽 -->
+      <template v-for="item in otherPropSlots" :key="item.prop" #[item.slotName]="scope">
+        <template v-if="item.slotName">
+          <slot :name="item.slotName" :row="scope.row"></slot>
+        </template>
       </template>
     </yj-table>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import YjTable from '@/base-ui/table'
+import { usePermission } from '@/hooks/use-permission'
 
 const props = defineProps({
   contentTableConfig: {
@@ -42,22 +54,47 @@ const props = defineProps({
     required: true
   }
 })
+// 动态获取操作的权限
+const isCreate = usePermission(props.pageName, 'create')
+const isUpdate = usePermission(props.pageName, 'update')
+const isDelete = usePermission(props.pageName, 'delete')
+const isQuery = usePermission(props.pageName, 'query')
+
+// 双向绑定pageInfo
+const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+
+watch(pageInfo, () => getPageData())
+
 // 请求用户信息
 const store = useStore()
-store.dispatch('system/getPageListAction', {
-  pageName: props.pageName,
-  queryInfo: {
-    offset: 0,
-    size: 10
-  }
-})
+const getPageData = (queryInfo: any = {}) => {
+  if (!isQuery) return
+  store.dispatch('system/getPageListAction', {
+    pageName: props.pageName,
+    queryInfo: {
+      offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+      size: pageInfo.value.pageSize,
+      ...queryInfo
+    }
+  })
+}
+getPageData()
 // 获取用户信息
 const dataList = computed(() => store.getters[`system/pageListData`](props.pageName))
 
 // 获取用户人数
-// const userCount = computed(() => store.state.system.userCount)
+const dataCount = computed(() => store.getters[`system/pageListCount`](props.pageName))
 
+// 获取其他的动态插槽名称
+const otherPropSlots = props.contentTableConfig.propList.filter(item => {
+  if (item.slotName === 'status') return false
+  if (item.slotName === 'createAt') return false
+  if (item.slotName === 'updateAt') return false
+  if (item.slotName === 'handle') return false
+  return true
 
+})
+defineExpose({ getPageData })
 </script>
 
 <style scoped>
