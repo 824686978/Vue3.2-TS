@@ -25,6 +25,7 @@ module.exports = {
     'no-undef': 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-mutating-props': 'off',
-    'vue/no-setup-props-destructure': 'off'
+    'vue/no-setup-props-destructure': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   }
 }

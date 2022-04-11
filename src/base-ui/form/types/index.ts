@@ -15,6 +15,7 @@ export interface IFormItem {
   options?: any[]
   // 定义其他选择
   otherOptions?: any
+  isHidden?: boolean
 }
 
 export interface IForm {

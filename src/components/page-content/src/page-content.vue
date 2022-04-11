@@ -8,7 +8,7 @@
     >
       <!-- 头部插槽 -->
       <template #headerHandler>
-        <el-button type="primary" v-if="isCreate">新建用户</el-button>
+        <el-button type="primary" v-if="isCreate" @click="handleNewClick">新建用户</el-button>
       </template>
 
       <!-- 列的插槽 -->
@@ -22,10 +22,10 @@
       </template>
       <template #createAt="scope">{{ $filters.formatTime(scope.row.createAt) }}</template>
       <template #updateAt="scope">{{ $filters.formatTime(scope.row.updateAt) }}</template>
-      <template #handle>
+      <template #handle="scope">
         <div class="handle-btn">
-          <el-button type="text" icon="Edit" size="small" v-if="isUpdate">编辑</el-button>
-          <el-button type="text" icon="Delete" size="small" v-if="isDelete">删除</el-button>
+          <el-button type="text" icon="Edit" size="small" v-if="isUpdate" @click="handleEditClick(scope.row)">编辑</el-button>
+          <el-button type="text" icon="Delete" size="small" v-if="isDelete" @click="handleDeleteClick(scope.row)">删除</el-button>
         </div>
       </template>
       <!-- 动态插入剩余插槽 -->
@@ -61,7 +61,7 @@ const isDelete = usePermission(props.pageName, 'delete')
 const isQuery = usePermission(props.pageName, 'query')
 
 // 双向绑定pageInfo
-const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+const pageInfo = ref({ currentPage: 1, pageSize: 10 })
 
 watch(pageInfo, () => getPageData())
 
@@ -72,7 +72,7 @@ const getPageData = (queryInfo: any = {}) => {
   store.dispatch('system/getPageListAction', {
     pageName: props.pageName,
     queryInfo: {
-      offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+      offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
       size: pageInfo.value.pageSize,
       ...queryInfo
     }
@@ -94,6 +94,27 @@ const otherPropSlots = props.contentTableConfig.propList.filter(item => {
   return true
 
 })
+
+// 监听删除操作
+const handleDeleteClick = (item: any) => {
+  store.dispatch('system/deletePageDataAction', {
+    pageName: props.pageName,
+    id: item.id
+  })
+}
+const emit = defineEmits(['newBtnClick', 'editBtnClick'])
+
+// 监听新建用户
+const handleNewClick = () => {
+  emit('newBtnClick')
+}
+
+// 监听编辑按钮
+const handleEditClick = (item: any) => {
+  emit('editBtnClick', item)
+}
+
+// 暴露
 defineExpose({ getPageData })
 </script>
 

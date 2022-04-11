@@ -6,7 +6,10 @@ import {
 } from '@/service/login/login'
 import router from '@/router'
 import localCache from '@/utils/cache'
-import { mapMenusToRoutes, mapMenusToPermissions } from '@/utils/map-menus'
+import {
+  mapMenusToRoutes,
+  mapMenusToPermissions
+} from '@/utils/map-menus'
 import { IAccount } from '@/service/login/types'
 import { ILoginState } from './types'
 import { IRootState } from '../types'
@@ -49,13 +52,15 @@ const loginModule: Module<ILoginState, IRootState> = {
       const permissions = mapMenusToPermissions(userMenus)
       // 保存按钮权限
       state.permissions = permissions
-
     }
   },
   getters: {},
   actions: {
     // 账号登录
-    async accountLoginAction({ commit }, payload: IAccount) {
+    async accountLoginAction(
+      { commit, dispatch },
+      payload: IAccount
+    ) {
       // 用户登录
       const loginResult = await accountLoginRequest(payload)
       const { id, token } = loginResult.data
@@ -63,6 +68,9 @@ const loginModule: Module<ILoginState, IRootState> = {
       commit('changeToken', token)
       // 本地缓存token
       localCache.setCache('token', token)
+
+      // 发送初始化请求
+      dispatch('getInitialDataAction', null, { root: true })
 
       // 请求用户信息
       const userInfoResult = await requestUserInfoById(id)
@@ -73,7 +81,8 @@ const loginModule: Module<ILoginState, IRootState> = {
       localCache.setCache('userInfo', userInfo)
 
       // 请求用户菜单
-      const userMenusResult = await requestUserMenusByRoleId(userInfo.role.id)
+      const userMenusResult =
+        await requestUserMenusByRoleId(userInfo.role.id)
       const userMenus = userMenusResult.data
       commit('changeUserMenus', userMenus)
 
@@ -86,10 +95,14 @@ const loginModule: Module<ILoginState, IRootState> = {
     },
 
     // 防止刷新，重新请求数据
-    loadLocalLogin({ commit }) {
+    loadLocalLogin({ commit, dispatch }) {
       const token = localCache.getCache('token')
       if (token) {
         commit('changeToken', token)
+        // 发送初始化请求
+        dispatch('getInitialDataAction', null, {
+          root: true
+        })
       }
 
       const userInfo = localCache.getCache('userInfo')

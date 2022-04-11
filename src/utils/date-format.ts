@@ -8,5 +8,5 @@ export function formatUtcString(
   UtcStr: string,
   format: string = DATE_TIME_FORMAT
 ) {
-  return dayjs.utc(UtcStr).format(format)
+  return dayjs.utc(UtcStr).utcOffset(8).format(format)
 }

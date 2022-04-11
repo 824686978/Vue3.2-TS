@@ -1,3 +1,6 @@
 export interface IRootState {
-  name: string
+  // 部门
+  entireDepartures: any[]
+  // 角色
+  entireRole: any[]
 }

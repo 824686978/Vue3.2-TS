@@ -1,7 +1,12 @@
 import { IRootState } from '@/store/types'
 import { Module } from 'vuex'
 import { ISystemState } from './types'
-import { getPageListData } from '@/service/main/system/system'
+import {
+  getPageListData,
+  deletePageData,
+  createPageData,
+  editPageData
+} from '@/service/main/system/system'
 
 const systemModule: Module<ISystemState, IRootState> = {
   namespaced: true,
@@ -65,54 +70,110 @@ const systemModule: Module<ISystemState, IRootState> = {
       const pageUrl = `/${pageName}/list`
 
       // 发送网络请求获取页面数据
-      const pageResult = await getPageListData(pageUrl, payload.queryInfo)
+      const pageResult = await getPageListData(
+        pageUrl,
+        payload.queryInfo
+      )
       const { list, totalCount } = pageResult.data
 
       // 转换首字母大写
       const changePageName =
-        pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
+        pageName.slice(0, 1).toUpperCase() +
+        pageName.slice(1)
 
       // 修改 state的数据
       commit(`change${changePageName}List`, list)
       commit(`change${changePageName}Count`, totalCount)
+      // 请求页面信息
+      // async getPageListAction({ commit }, payload) {
+      //   // 获取url
+      //   const pageName = payload.pageUrl
+      //   let pageUrl = ''
+      //   switch (pageName) {
+      //     case 'user':
+      //       pageUrl = 'users/list'
+      //       break
+      //     case 'role': {
+      //       pageUrl = 'role/list'
+      //       break
+      //     }
+      //   }
+
+      //   // 发生网络请求数据
+      //   const pageResult = await getPageListData(pageUrl, payload.queryInfo)
+      //   const { list, totalCount } = pageResult.data
+      //   console.log(pageResult)
+
+      //   switch (pageName) {
+      //     case 'user':
+      //       // 修改state的数据
+      //       commit(`changeUserList`, list)
+      //       commit(`changeUserCount`, totalCount)
+      //       break
+      //     case 'role': {
+      //       commit(`changeRoleList`, list)
+      //       commit(`changeRoleCount`, totalCount)
+      //       break
+      //     }
+      //   }
+
+      // // 修改state的数据
+      // commit(`change${pageName}List`, list)
+      // commit(`change${pageName}Count`, totalCount)
+    },
+    // 删除请求
+    async deletePageDataAction({ dispatch }, payload) {
+      // 1.获取pageName和id
+      const { pageName, id } = payload
+      // 2.根据pageName和id拼接url
+      const pageUrl = `/${pageName}/${id}`
+      // 3.根据urlfa's
+      await deletePageData(pageUrl)
+      // 重新请求最新的数据
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
+    },
+
+    // 新建请求
+    async createPageDataAction({ dispatch }, payload) {
+      // 得到数据
+      const { pageName, newData } = payload
+      // 拼接url
+      const pageUrl = `/${pageName}`
+      // 发送网络请求
+      await createPageData(pageUrl, newData)
+      // 重新请求最新的数据
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
+    },
+
+    // 编辑请求
+    async editPageDataAction({ dispatch }, payload) {
+      // 得到数据
+      const { pageName, editData, id } = payload
+      // 拼接url
+      const pageUrl = `/${pageName}/${id}`
+      // 发送网络请求
+      await editPageData(pageUrl, editData)
+      // 重新请求最新的数据
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
     }
-
-    // 请求页面信息
-    // async getPageListAction({ commit }, payload) {
-    //   // 获取url
-    //   const pageName = payload.pageUrl
-    //   let pageUrl = ''
-    //   switch (pageName) {
-    //     case 'user':
-    //       pageUrl = 'users/list'
-    //       break
-    //     case 'role': {
-    //       pageUrl = 'role/list'
-    //       break
-    //     }
-    //   }
-
-    //   // 发生网络请求数据
-    //   const pageResult = await getPageListData(pageUrl, payload.queryInfo)
-    //   const { list, totalCount } = pageResult.data
-    //   console.log(pageResult)
-
-    //   switch (pageName) {
-    //     case 'user':
-    //       // 修改state的数据
-    //       commit(`changeUserList`, list)
-    //       commit(`changeUserCount`, totalCount)
-    //       break
-    //     case 'role': {
-    //       commit(`changeRoleList`, list)
-    //       commit(`changeRoleCount`, totalCount)
-    //       break
-    //     }
-    //   }
-
-    // // 修改state的数据
-    // commit(`change${pageName}List`, list)
-    // commit(`change${pageName}Count`, totalCount)
   }
 }
 
