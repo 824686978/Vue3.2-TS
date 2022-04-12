@@ -6,16 +6,23 @@ import { RouteRecordRaw } from 'vue-router'
 let firstMenu: any = null
 
 // 动态设置权限（路由）
-export function mapMenusToRoutes(userMenus: any[]): RouteRecordRaw[] {
+export function mapMenusToRoutes(
+  userMenus: any[]
+): RouteRecordRaw[] {
   const routes: RouteRecordRaw[] = []
 
   // 1. 先加载默认的所有routes
   const allRoutes: RouteRecordRaw[] = []
   // 遍历所有/router/main下的ts文件
-  const routeFiles = require.context('../router/main', true, /\.ts/)
+  const routeFiles = require.context(
+    '../router/main',
+    true,
+    /\.ts/
+  )
   routeFiles.keys().forEach((key) => {
     // 对路径进行切割
-    const route = require('../router/main' + key.split('.')[1])
+    const route = require('../router/main' +
+      key.split('.')[1])
     // 就路由注册全部路由
     allRoutes.push(route.default)
   })
@@ -28,7 +35,9 @@ export function mapMenusToRoutes(userMenus: any[]): RouteRecordRaw[] {
     for (const menu of menus) {
       if (menu.type === 2) {
         // 匹配对应路由
-        const route = allRoutes.find((route) => route.path === menu.url)
+        const route = allRoutes.find(
+          (route) => route.path === menu.url
+        )
         if (route) {
           // 把匹配的路由加入routes
           routes.push(route)
@@ -47,7 +56,10 @@ export function mapMenusToRoutes(userMenus: any[]): RouteRecordRaw[] {
 }
 
 // 面包屑路径匹配
-export function pathMapBreadcrumbs(userMenus: any[], currentPath: string) {
+export function pathMapBreadcrumbs(
+  userMenus: any[],
+  currentPath: string
+) {
   const breadcrumb: IBreadcrumb[] = []
   pathMapToMenu(userMenus, currentPath, breadcrumb)
   return breadcrumb
@@ -61,13 +73,19 @@ export function pathMapToMenu(
 ): any {
   for (const menu of userMenus) {
     if (menu.type === 1) {
-      const findMenu = pathMapToMenu(menu.children ?? [], currentPath)
+      const findMenu = pathMapToMenu(
+        menu.children ?? [],
+        currentPath
+      )
       if (findMenu) {
         breadcrumb?.push({ name: menu.name })
         breadcrumb?.push({ name: findMenu.name })
         return findMenu
       }
-    } else if (menu.type === 2 && menu.url === currentPath) {
+    } else if (
+      menu.type === 2 &&
+      menu.url === currentPath
+    ) {
       return menu
     }
   }
@@ -99,8 +117,7 @@ export function mapMenusToPermissions(userMenus: any[]) {
     for (const menu of menus) {
       if (menu.type === 2 || menu.type === 1) {
         _recurseGetPermission(menu.children ?? [])
-      }
-      else if (menu.type === 3) {
+      } else if (menu.type === 3) {
         permissions.push(menu.permission)
       }
     }
@@ -108,6 +125,22 @@ export function mapMenusToPermissions(userMenus: any[]) {
   _recurseGetPermission(userMenus)
 
   return permissions
+}
+
+// 遍历树形的叶子节点
+export function menuMapLeafKeys(menuList: any[]) {
+  const leftKeys: number[] = []
+  const _recurseGetLeaf = (menuList: any[]) => {
+    for (const menu of menuList) {
+      if (menu.children) {
+        _recurseGetLeaf(menu.children)
+      } else {
+        leftKeys.push(menu.id)
+      }
+    }
+  }
+  _recurseGetLeaf(menuList)
+  return leftKeys
 }
 
 export { firstMenu }

@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import userInfo from './cpns/user-info.vue'
-import YjBreadcrumb, { IBreadcrumb } from '@/base-ui/breadcrumb'
+import YjBreadcrumb from '@/base-ui/breadcrumb'
 import { pathMapBreadcrumbs } from '@/utils/map-menus'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'

@@ -3,6 +3,7 @@
     <el-dialog v-model="dialogVisible" title="新建用户" width="30%" center destroy-on-close>
       <span>
         <yj-form v-model="formData" v-bind="modalConfig"></yj-form>
+        <slot></slot>
       </span>
       <template #footer>
         <span class="dialog-footer">
@@ -33,6 +34,11 @@ const props = defineProps({
   pageName: {
     type: String,
     required: true
+  },
+  // 定义其余传参数据 // role的对话框数据
+  otherInfo: {
+    type: Object,
+    default: () => ({})
   }
 })
 // 判断对话框是否显示
@@ -54,14 +60,14 @@ const handleConfirmClick = () => {
     // 编辑
     store.dispatch('system/editPageDataAction', {
       pageName: props.pageName,
-      editData: { ...formData.value },
+      editData: { ...formData.value, ...props.otherInfo },
       id: props.defaultInfo.id
     })
   } else {
     // 新建
     store.dispatch('system/createPageDataAction',{
       pageName: props.pageName,
-      newData: { ...formData.value }
+      newData: { ...formData.value, ...props.otherInfo }
     })
   }
 }

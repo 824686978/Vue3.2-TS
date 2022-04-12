@@ -104,7 +104,7 @@ const loginModule: Module<ILoginState, IRootState> = {
           root: true
         })
       }
-
+      // 将数据保存到本地
       const userInfo = localCache.getCache('userInfo')
       if (userInfo) {
         commit('changeUserInfo', userInfo)

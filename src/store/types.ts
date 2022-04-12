@@ -3,4 +3,6 @@ export interface IRootState {
   entireDepartures: any[]
   // 角色
   entireRole: any[]
+  // 菜单
+  entireMenu: any[]
 }
